@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<body>
+    <h1>내 정보 확인</h1>
+    <hr>
+    <p><strong>아이디:</strong> {{username}}</p>
+    <p><strong>이메일:</strong> {{email}}</p>
+    <p><strong>회원 권한:</strong> {{role}}</p>
+
+    <hr>
+    <button onclick="location.href='/'">홈</button>
+    <button onclick="togglePasswordForm()">비밀번호 변경</button>
+    <form action="/user/leave" method="post">
+        <button type="submit">회원 탈퇴</button>
+    </form>
+
+    <div id="passwordForm" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ccc; width: 300px;">
+        <form action="/user/password" method="post">
+            <input type="password" name="currentPassword" placeholder="현재 비밀번호" required style="margin-bottom: 5px; width: 100%;"><br>
+            <input type="password" name="newPassword" placeholder="새 비밀번호" required style="margin-bottom: 10px; width: 100%;"><br>
+            <button type="submit">변경 완료</button>
+            <button onclick="togglePasswordForm()">취소</button>
+        </form>
+    </div>
+
+    <script>
+        function togglePasswordForm() {
+            const form = document.getElementById('passwordForm');
+            if (form.style.display === 'none') {
+                form.style.display = 'block'; // 숨겨져 있으면 보여줘!
+            } else {
+                form.style.display = 'none';  // 보이고 있으면 숨겨!
+            }
+        }
+    </script>
+
+</body>
+</html>

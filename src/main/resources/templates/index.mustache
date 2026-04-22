@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<body>
+<h1>index page</h1>
+<hr>
+
+{{#username}}
+    <p>name : <strong>{{username}}</strong></p>
+
+    <button onclick="location.href='/user'">회원 정보</button>
+
+    <form action="/logout" method="post" style="display: inline;">
+        <button type="submit">로그아웃</button>
+    </form>
+{{/username}}
+
+{{^username}}
+    <button onclick="location.href='/login'">로그인</button>
+    <button onclick="location.href='/join'">회원가입</button>
+{{/username}}
+
+</body>
+</html>
