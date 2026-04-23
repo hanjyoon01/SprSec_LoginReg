@@ -6,6 +6,7 @@ import com.example.seven.domain.user.service.CustomUserDetails;
 import com.example.seven.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -60,6 +62,18 @@ public class UserController {
             // 실패(비밀번호 틀림 등)하면 에러 표시(?error=true)를 달고 튕겨냄
             return "redirect:/user?error=true";
         }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')") // ADMIN 권한이 없으면 이 메서드 실행 자체가 안 됨
+    @PostMapping("/user/admin/leave")
+    public String adminWithdrawUser(@RequestParam("username") String username) {
+
+        // 서비스의 기존 삭제 로직을 그대로 활용합니다.
+        // (단, 관리자 본인이 탈퇴되는 것이 아니므로 세션 파기 로직은 필요 없습니다.)
+        userService.leave(username);
+
+        // 삭제 후 다시 목록 페이지로 리다이렉트
+        return "redirect:/user?deleted=true";
     }
 
     @PostMapping("/user/leave")
