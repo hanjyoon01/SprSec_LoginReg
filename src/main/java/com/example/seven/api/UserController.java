@@ -1,6 +1,7 @@
 package com.example.seven.api;
 
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
+import com.example.seven.domain.user.entity.UserEntity;
 import com.example.seven.domain.user.service.CustomUserDetails;
 import com.example.seven.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -27,6 +30,17 @@ public class UserController {
         model.addAttribute("username", userDetails.getUsername());
         model.addAttribute("email", userDetails.getEmail());
         model.addAttribute("role", userDetails.getRole());
+
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+        if (isAdmin) {
+            // 관리자라면 'USER' 권한을 가진 회원들 목록을 가져옴
+            List<UserEntity> userList = userService.findAllUsersByRole("USER");
+            model.addAttribute("userList", userList);
+            model.addAttribute("isAdmin", true); // 화면 제어용 플래그
+            System.out.println(userList);
+        }
 
         return "user";
     }

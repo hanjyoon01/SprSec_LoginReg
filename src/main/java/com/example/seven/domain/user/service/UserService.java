@@ -2,23 +2,28 @@ package com.example.seven.domain.user.service;
 
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
 import com.example.seven.domain.user.dto.UserRequestDTO;
+import com.example.seven.domain.user.entity.RoleEntity;
 import com.example.seven.domain.user.entity.UserEntity;
-import com.example.seven.domain.user.entity.UserRole;
+import com.example.seven.domain.user.repository.RoleRepository;
 import com.example.seven.domain.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 // UserDetailsService 인터페이스를 서비스단에서 구현해야 함 => 규약 준수
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -34,7 +39,12 @@ public class UserService implements UserDetailsService {
         entity.setUsername(username);
         entity.setPassword(passwordEncoder.encode(password));
         entity.setEmail(email);
-        entity.setRole(UserRole.USER);
+//        RoleEntity userRole = roleRepository.findByName("USER")
+//                .orElseThrow(() -> new RuntimeException("DB에 ROLE_USER 권한 셋팅이 되어있지 않습니다."));
+        String roleName = dto.isAdmin() ? "ADMIN" : "USER";
+        RoleEntity userRole = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+        entity.setRole(userRole);
 
         userRepository.save(entity);
     }
@@ -66,5 +76,9 @@ public class UserService implements UserDetailsService {
         UserEntity entity = userRepository.findByUsername(username).orElseThrow();
 
         return new CustomUserDetails(entity);
+    }
+
+    public List<UserEntity> findAllUsersByRole(String roleName) {
+        return userRepository.findAllByRoleName(roleName);
     }
 }

@@ -11,12 +11,37 @@
     <p><strong>이메일:</strong> {{email}}</p>
     <p><strong>회원 권한:</strong> {{role}}</p>
 
+
+    {{#isAdmin}}
+        <hr>
+        <h3>가입된 점주(USER) 목록</h3>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>아이디</th>
+                <th>이메일</th>
+                <th>권한</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#userList}}
+                <tr>
+                    <td>{{username}}</td>
+                    <td>{{email}}</td>
+                    <td>{{role.name}}</td>
+                </tr>
+            {{/userList}}
+            </tbody>
+        </table>
+    {{/isAdmin}}
+
     <hr>
     <button onclick="location.href='/'">홈</button>
     <button onclick="togglePasswordForm()">비밀번호 변경</button>
     <form action="/user/leave" method="post">
         <button type="submit">회원 탈퇴</button>
     </form>
+
 
     <div id="passwordForm" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ccc; width: 300px;">
         <form action="/user/password" method="post">

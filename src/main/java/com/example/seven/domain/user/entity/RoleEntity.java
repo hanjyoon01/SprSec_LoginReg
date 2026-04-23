@@ -7,21 +7,13 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class UserEntity {
+public class RoleEntity {
     // ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // username 중복 방지
     @Column(nullable = false, unique = true)
-    private String username;
-    private String password;
-    private String email;
-
-    //UserRole Enum 사용
-    //String 그대로 사용되도록
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
+    private String name;
+    private String kname;
 }

@@ -19,7 +19,7 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(new SimpleGrantedAuthority("ROLE_" + entity.getRole().name()));
+        collection.add(new SimpleGrantedAuthority(entity.getRole().getName()));
         return collection;
     }
 
@@ -38,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getRole() {
-        return entity.getRole().toString();
+        return entity.getRole().getKname();
     }
 
 
