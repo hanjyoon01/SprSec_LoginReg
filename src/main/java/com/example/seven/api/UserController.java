@@ -1,6 +1,7 @@
 package com.example.seven.api;
 
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
+import com.example.seven.domain.user.dto.UserUpdateDTO;
 import com.example.seven.domain.user.entity.UserEntity;
 import com.example.seven.domain.user.service.CustomUserDetails;
 import com.example.seven.domain.user.service.UserService;
@@ -29,8 +30,12 @@ public class UserController {
 
     @GetMapping("/user")
     public String userPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        model.addAttribute("username", userDetails.getUsername());
-        model.addAttribute("email", userDetails.getEmail());
+        UserEntity user = userService.loadUserByUsername(userDetails.getUsername()).getEntity();
+
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("phoneNumber", user.getPhoneNumber());
+        model.addAttribute("address", user.getAddress());
         model.addAttribute("role", userDetails.getRole());
 
         boolean isAdmin = userDetails.getAuthorities().stream()
@@ -45,6 +50,23 @@ public class UserController {
         }
 
         return "user";
+    }
+
+    // 사용자 정보 변경
+    @PostMapping("/user/update")
+    public String updateUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                 UserUpdateDTO dto) {
+        try {
+            // 로그인한 사용자의 정보 변경
+            userService.updateUserInfo(userDetails.getUsername(), dto);
+
+            // 성공하면 성공했다는 표시(?success=true)를 달고 내 정보 페이지로 튕겨냄
+            return "redirect:/user?success=true";
+
+        } catch (IllegalArgumentException e) {
+            // 실패(정보 없음 등)하면 에러 표시(?error=true)를 달고 튕겨냄
+            return "redirect:/user?error=true";
+        }
     }
 
     // 비밀번호 변경

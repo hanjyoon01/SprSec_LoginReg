@@ -8,12 +8,24 @@
     <h1>join page</h1>
     <hr>
     <form action="/join" method="post">
+        <label for="username">사용자 이름</label>
         <input type="text" name="username" required>
+        <br>
+        <label for="password">비밀번호</label>
         <input type="password" name="password" required>
+        <br>
+        <label for="email">이메일</label>
         <input type="email" name="email" required>
+        <br>
+        <label for="phoneNumber">전화번호</label>
+        <input type="text" name="phoneNumber">
+        <br>
+        <label for="address">주소</label>
+        <input type="text" name="address">
         <label>
             <input type="checkbox" name="admin"> 관리자로 가입하기
         </label>
+        <br>
         <button type="submit">join</button>
     </form>
 </body>

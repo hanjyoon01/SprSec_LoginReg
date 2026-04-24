@@ -9,32 +9,58 @@
     <hr>
     <p><strong>아이디:</strong> {{username}}</p>
     <p><strong>이메일:</strong> {{email}}</p>
+    <p><strong>전화번호:</strong> {{#phoneNumber}}{{phoneNumber}}{{/phoneNumber}}</p>
+    <p><strong>주소:</strong> {{#address}}{{address}}{{/address}}</p>
     <p><strong>회원 권한:</strong> {{role}}</p>
+    <button onclick="toggleUserUpdateForm()">사용자 정보 변경</button>
 
+    <div id="userUpdateForm" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ccc; width: 300px;">
+        <form action="/user/update" method="post">
+            <label for="email">이메일</label>
+            <input type="text" value="{{email}}" name="email" required style="margin-bottom: 5px; width: 100%;"><br>
+            <label for="phoneNumber">전화번호</label>
+            <input type="text" value="{{#phoneNumber}}{{phoneNumber}}{{/phoneNumber}}" name="phoneNumber" required style="margin-bottom: 5px; width: 100%;"><br>
+            <label for="address">주소</label>
+            <input type="text" value="{{#address}}{{address}}{{/address}}" name="address" required style="margin-bottom: 5px; width: 100%;"><br>
+            <button type="submit">변경 완료</button>
+            <button type="button" onclick="toggleUserUpdateForm()">취소</button>
+        </form>
+    </div>
 
     {{#isAdmin}}
         <hr>
-        <h3>가입된 점주(USER) 목록</h3>
+        <h3>가입된 점주 목록</h3>
         <table border="1">
             <thead>
             <tr>
                 <th>아이디</th>
                 <th>이메일</th>
+                <th>전화번호</th>
+                <th>주소</th>
                 <th>권한</th>
             </tr>
             </thead>
             <tbody>
+            <!-- 일반 사용자 회원이 있을 때 -->
             {{#userList}}
                 <tr>
                     <td>{{username}}</td>
                     <td>{{email}}</td>
+                    <td>{{phoneNumber}}</td>
+                    <td>{{address}}</td>
                     <td>{{role.name}}</td>
                     <td>
                         <form action="/user/admin/leave" method="post" onsubmit="return confirm('정말로 이 사용자를 탈퇴시키겠습니까?');">
                             <input type="hidden" name="username" value="{{username}}">
-                            <button type="submit" style="color: red;">탈퇴시키기</button>
+                            <button type="submit">탈퇴시키기</button>
                         </form>
                     </td>
+                </tr>
+            {{/userList}}
+            <!-- 일반 사용자 회원이 없을 때 -->
+            {{^userList}}
+                <tr>
+                    <td colspan="4" style="text-align: center;">현재 가입된 일반 사용자가 없습니다.</td>
                 </tr>
             {{/userList}}
             </tbody>
@@ -54,7 +80,7 @@
             <input type="password" name="currentPassword" placeholder="현재 비밀번호" required style="margin-bottom: 5px; width: 100%;"><br>
             <input type="password" name="newPassword" placeholder="새 비밀번호" required style="margin-bottom: 10px; width: 100%;"><br>
             <button type="submit">변경 완료</button>
-            <button onclick="togglePasswordForm()">취소</button>
+            <button type="button" onclick="togglePasswordForm()">취소</button>
         </form>
     </div>
 
@@ -62,12 +88,20 @@
         function togglePasswordForm() {
             const form = document.getElementById('passwordForm');
             if (form.style.display === 'none') {
-                form.style.display = 'block'; // 숨겨져 있으면 보여줘!
+                form.style.display = 'block';
             } else {
-                form.style.display = 'none';  // 보이고 있으면 숨겨!
+                form.style.display = 'none';
+            }
+        }
+
+        function toggleUserUpdateForm() {
+            const form = document.getElementById('userUpdateForm');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
             }
         }
     </script>
-
 </body>
 </html>

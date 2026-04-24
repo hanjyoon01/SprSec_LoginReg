@@ -7,6 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name="Member")
 public class UserEntity {
     // ID
     @Id
@@ -18,6 +19,8 @@ public class UserEntity {
     private String username;
     private String password;
     private String email;
+    private String phoneNumber;
+    private String address;
 
     //UserRole Enum 사용
     //String 그대로 사용되도록

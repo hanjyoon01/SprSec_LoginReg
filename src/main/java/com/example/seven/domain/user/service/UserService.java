@@ -2,6 +2,7 @@ package com.example.seven.domain.user.service;
 
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
 import com.example.seven.domain.user.dto.UserRequestDTO;
+import com.example.seven.domain.user.dto.UserUpdateDTO;
 import com.example.seven.domain.user.entity.RoleEntity;
 import com.example.seven.domain.user.entity.UserEntity;
 import com.example.seven.domain.user.repository.RoleRepository;
@@ -32,6 +33,8 @@ public class UserService implements UserDetailsService {
         String username = dto.getUsername();
         String password = dto.getPassword();
         String email = dto.getEmail();
+        String phoneNumber = dto.getPhoneNumber();
+        String address = dto.getAddress();
 
         //**** 디테일 추가 => 이미 동일한 username이 있는지 확인, 성공 여부에 따른 return값 추가 ****
 
@@ -39,6 +42,9 @@ public class UserService implements UserDetailsService {
         entity.setUsername(username);
         entity.setPassword(passwordEncoder.encode(password));
         entity.setEmail(email);
+        entity.setPhoneNumber(phoneNumber);
+        entity.setAddress(address);
+
 //        RoleEntity userRole = roleRepository.findByName("USER")
 //                .orElseThrow(() -> new RuntimeException("DB에 ROLE_USER 권한 셋팅이 되어있지 않습니다."));
         String roleName = dto.isAdmin() ? "ADMIN" : "USER";
@@ -47,6 +53,12 @@ public class UserService implements UserDetailsService {
         entity.setRole(userRole);
 
         userRepository.save(entity);
+    }
+
+    // 회원탈퇴 메소드
+    public void leave(String username) {
+        UserEntity entity = userRepository.findByUsername(username).orElseThrow();
+        userRepository.delete(entity);
     }
 
     // 비밀번호 변경
@@ -62,10 +74,15 @@ public class UserService implements UserDetailsService {
         userRepository.save(entity);
     }
 
-    // 회원탈퇴 메소드
-    public void leave(String username) {
+    // 사용자 정보 변경
+    public void updateUserInfo(String username, UserUpdateDTO dto) {
         UserEntity entity = userRepository.findByUsername(username).orElseThrow();
-        userRepository.delete(entity);
+
+        entity.setEmail(dto.getEmail());
+        entity.setPhoneNumber(dto.getPhoneNumber());
+        entity.setAddress(dto.getAddress());
+
+        userRepository.save(entity);
     }
 
     // AuthenticationProvider가 불러서 사용할 메서드

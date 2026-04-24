@@ -9,6 +9,7 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,7 +34,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService userService) {
 
         // CSRF disable
         http
@@ -48,12 +49,14 @@ public class SecurityConfig {
                         .loginPage("/login"));
 
         // 로그인 유지 설정 (rememberMe)
-//        http
-//                .rememberMe(me -> me
-//                        .key("qdflaksfnalkadlknasldknaadagghmksdfw")
-//                        .rememberMeParameter("remember-me")
-//                        .tokenValiditySeconds(14 * 24 * 60 * 60)
-//                );
+        http
+                .rememberMe(me -> me
+                        .key("qdflaksfnalkadlknasldknaadagghmksdfw")
+                        .rememberMeParameter("remember-me")
+                        // 1일 동안 유지
+                        .tokenValiditySeconds(24 * 60 * 60)
+                        .userDetailsService(userService)
+                );
 
         // 로그아웃 설정
         http.logout((auth) -> auth
@@ -70,18 +73,17 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         // 홈, 회원가입, 로그인 경로는 모든 권한 접근 가능
                         .requestMatchers("/user/**").hasAuthority("USER")
-                        // 사용자 페이지는 사용자, 관리자 권한 접근 가능
-                        // .requestMatchers("/admin").hasRole("ADMIN")
                         // 관리자 페이지는 관리자 권한만 접근 가능
                         .requestMatchers("/admin").access(customAuthorizationManager())
-                        .anyRequest().denyAll()
                         // 그 외 요청 모두 거절
+                        .anyRequest().denyAll()
                 );
 
         // 세션
-        // http
-        //        .sessionManagement(session -> session
-        //                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        http
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         // 로그인 이후 쿠키로 발급되는 JSESSIONID가 변경됨
         http
                 .sessionManagement(session -> session

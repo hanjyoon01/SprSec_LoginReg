@@ -33,10 +33,19 @@ public class CustomUserDetails implements UserDetails {
         return entity.getUsername();
     }
 
+    public UserEntity getEntity() {
+        return entity;
+    }
+
     public String getEmail() {
         return entity.getEmail();
     }
-
+    public String getPhoneNumber() {
+        return entity.getPhoneNumber();
+    }
+    public String getAddress() {
+        return entity.getAddress();
+    }
     public String getRole() {
         return entity.getRole().getKname();
     }
