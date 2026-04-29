@@ -1,8 +1,7 @@
 package com.example.seven.api;
 
-import com.example.seven.domain.user.service.CustomUserDetails;
+import com.example.seven.domain.user.service.MemberDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,7 @@ public class HomeController {
 
     // 메인 홈 화면
     @GetMapping("/")
-    public String index(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+    public String index(@AuthenticationPrincipal MemberDetails userDetails, Model model) {
 //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 //        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
 

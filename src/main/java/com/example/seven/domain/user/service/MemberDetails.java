@@ -1,22 +1,20 @@
 package com.example.seven.domain.user.service;
 
-import com.example.seven.domain.user.entity.UserEntity;
+import com.example.seven.domain.user.entity.MemberEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 @Getter
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class MemberDetails implements UserDetails {
 
-    private final UserEntity entity;
+    private final MemberEntity entity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

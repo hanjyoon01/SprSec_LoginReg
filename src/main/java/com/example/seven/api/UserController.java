@@ -2,10 +2,10 @@ package com.example.seven.api;
 
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
 import com.example.seven.domain.user.dto.UserUpdateDTO;
-import com.example.seven.domain.user.entity.UserEntity;
+import com.example.seven.domain.user.entity.MemberEntity;
 import com.example.seven.domain.user.entity.Role;
-import com.example.seven.domain.user.service.CustomUserDetails;
-import com.example.seven.domain.user.service.UserService;
+import com.example.seven.domain.user.service.MemberDetails;
+import com.example.seven.domain.user.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,13 +24,13 @@ import java.util.List;
 @Controller
 public class UserController {
 
-    private final UserService userService;
-    public UserController(UserService userService) {
-        this.userService = userService;
+    private final MemberService memberService;
+    public UserController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @GetMapping("/user")
-    public String userPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+    public String userPage(@AuthenticationPrincipal MemberDetails userDetails, Model model) {
 
         // CustomUserDetails에 getEntity()와 각 필드 getter가 이미 정의되어 있습니다.
         model.addAttribute("username", userDetails.getUsername());
@@ -45,7 +45,7 @@ public class UserController {
 
         if (isAdmin) {
             // 관리자라면 'USER' 권한을 가진 회원들 목록을 가져옴
-            List<UserEntity> userList = userService.findAllUsersByRole(Role.ROLE_USER);
+            List<MemberEntity> userList = memberService.findAllUsersByRole(Role.ROLE_USER);
             model.addAttribute("userList", userList);
             model.addAttribute("isAdmin", true); // 화면 제어용 플래그
             System.out.println(userList);
@@ -56,11 +56,11 @@ public class UserController {
 
     // 사용자 정보 변경
     @PostMapping("/user/update")
-    public String updateUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public String updateUserInfo(@AuthenticationPrincipal MemberDetails userDetails,
                                  UserUpdateDTO dto) {
         try {
             // 로그인한 사용자의 정보 변경
-            userService.updateUserInfo(userDetails.getUsername(), dto);
+            memberService.updateUserInfo(userDetails.getUsername(), dto);
 
             // 성공하면 성공했다는 표시(?success=true)를 달고 내 정보 페이지로 튕겨냄
             return "redirect:/user?success=true";
@@ -73,11 +73,11 @@ public class UserController {
 
     // 비밀번호 변경
     @PostMapping("/user/password")
-    public String changePassword(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public String changePassword(@AuthenticationPrincipal MemberDetails userDetails,
                                  PasswordChangeDTO dto) {
         try {
             // 로그인한 사람의 아이디와 입력받은 비밀번호 데이터를 서비스로 넘김
-            userService.changePassword(userDetails.getUsername(), dto);
+            memberService.changePassword(userDetails.getUsername(), dto);
 
             // 성공하면 성공했다는 표시(?success=true)를 달고 내 정보 페이지로 튕겨냄
             return "redirect:/user?success=true";
@@ -94,7 +94,7 @@ public class UserController {
 
         // 서비스의 기존 삭제 로직을 그대로 활용합니다.
         // (단, 관리자 본인이 탈퇴되는 것이 아니므로 세션 파기 로직은 필요 없습니다.)
-        userService.leave(username);
+        memberService.leave(username);
 
         // 삭제 후 다시 목록 페이지로 리다이렉트
         return "redirect:/user?deleted=true";
@@ -106,7 +106,7 @@ public class UserController {
 
         if (auth != null) {
             // 서비스의 탈퇴 로직 호출
-            userService.leave(auth.getName());
+            memberService.leave(auth.getName());
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
