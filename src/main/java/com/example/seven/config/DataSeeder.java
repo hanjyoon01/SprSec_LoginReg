@@ -2,6 +2,7 @@ package com.example.seven.config;
 
 import com.example.seven.domain.user.entity.RoleEntity;
 import com.example.seven.domain.user.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

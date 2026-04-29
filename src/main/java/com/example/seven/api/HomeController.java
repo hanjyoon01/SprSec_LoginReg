@@ -13,14 +13,16 @@ public class HomeController {
     // 메인 홈 화면
     @GetMapping("/")
     public String index(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
-        System.out.println(username);
-        System.out.println(role);
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
 
         if (userDetails != null) {
             // 화면(Mustache)에서 써먹을 수 있게 "username"이라는 이름표로 데이터를 넘겨줍니다.
             model.addAttribute("username", userDetails.getUsername());
+            model.addAttribute("role", userDetails.getRole());
+            System.out.println(userDetails.getUsername());
+            System.out.println(userDetails.getRole());
+
         }
 
         return "index";

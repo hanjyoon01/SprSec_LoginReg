@@ -7,6 +7,10 @@ import com.example.seven.domain.user.entity.RoleEntity;
 import com.example.seven.domain.user.entity.UserEntity;
 import com.example.seven.domain.user.repository.RoleRepository;
 import com.example.seven.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,19 +18,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 // UserDetailsService 인터페이스를 서비스단에서 구현해야 함 => 규약 준수
+@Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     // 회원가입 메소드
     public void join(UserRequestDTO dto) {
@@ -83,6 +82,22 @@ public class UserService implements UserDetailsService {
         entity.setAddress(dto.getAddress());
 
         userRepository.save(entity);
+        refreshAuthentication(entity);
+    }
+
+    private void refreshAuthentication(UserEntity updatedEntity) {
+        // 새로운 UserDetails 객체 생성
+        CustomUserDetails newUserDetails = new CustomUserDetails(updatedEntity);
+
+        // 새로운 인증 객체 생성 (기존의 권한 정보 유지)
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                newUserDetails,
+                null, // 비밀번호는 보안상 null 처리하거나 기존 것 사용
+                newUserDetails.getAuthorities()
+        );
+
+        // 스프링 시큐리티 컨텍스트에 덮어쓰기
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
 
     // AuthenticationProvider가 불러서 사용할 메서드

@@ -7,6 +7,7 @@ import com.example.seven.domain.user.service.CustomUserDetails;
 import com.example.seven.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,14 +31,15 @@ public class UserController {
 
     @GetMapping("/user")
     public String userPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        UserEntity user = userService.loadUserByUsername(userDetails.getUsername()).getEntity();
 
-        model.addAttribute("username", user.getUsername());
-        model.addAttribute("email", user.getEmail());
-        model.addAttribute("phoneNumber", user.getPhoneNumber());
-        model.addAttribute("address", user.getAddress());
+        // CustomUserDetails에 getEntity()와 각 필드 getter가 이미 정의되어 있습니다.
+        model.addAttribute("username", userDetails.getUsername());
+        model.addAttribute("email", userDetails.getEmail());
+        model.addAttribute("phoneNumber", userDetails.getPhoneNumber());
+        model.addAttribute("address", userDetails.getAddress());
         model.addAttribute("role", userDetails.getRole());
 
+        // 2. 권한 확인도 더 직관적으로 처리 가능합니다.
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ADMIN"));
 

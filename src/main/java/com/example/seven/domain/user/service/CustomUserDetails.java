@@ -1,6 +1,9 @@
 package com.example.seven.domain.user.service;
 
 import com.example.seven.domain.user.entity.UserEntity;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,13 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Getter
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private UserEntity entity;
-
-    public CustomUserDetails(UserEntity entity) {
-        this.entity = entity;
-    }
+    private final UserEntity entity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -31,10 +32,6 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return entity.getUsername();
-    }
-
-    public UserEntity getEntity() {
-        return entity;
     }
 
     public String getEmail() {

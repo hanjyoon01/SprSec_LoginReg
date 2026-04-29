@@ -70,10 +70,9 @@
     <hr>
     <button onclick="location.href='/'">홈</button>
     <button onclick="togglePasswordForm()">비밀번호 변경</button>
-    <form action="/user/leave" method="post">
+    <form action="/user/leave" method="post" onsubmit="return confirm('정말로 탈퇴하시겠습니까? 데이터는 복구할 수 없습니다.');">
         <button type="submit">회원 탈퇴</button>
     </form>
-
 
     <div id="passwordForm" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ccc; width: 300px;">
         <form action="/user/password" method="post">
