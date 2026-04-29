@@ -24,7 +24,6 @@ public class UserEntity {
 
     //UserRole Enum 사용
     //String 그대로 사용되도록
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

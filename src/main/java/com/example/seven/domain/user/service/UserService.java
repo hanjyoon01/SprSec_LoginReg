@@ -3,9 +3,8 @@ package com.example.seven.domain.user.service;
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
 import com.example.seven.domain.user.dto.UserRequestDTO;
 import com.example.seven.domain.user.dto.UserUpdateDTO;
-import com.example.seven.domain.user.entity.RoleEntity;
+import com.example.seven.domain.user.entity.Role;
 import com.example.seven.domain.user.entity.UserEntity;
-import com.example.seven.domain.user.repository.RoleRepository;
 import com.example.seven.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +23,6 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     // 회원가입 메소드
@@ -46,10 +44,10 @@ public class UserService implements UserDetailsService {
 
 //        RoleEntity userRole = roleRepository.findByName("USER")
 //                .orElseThrow(() -> new RuntimeException("DB에 ROLE_USER 권한 셋팅이 되어있지 않습니다."));
-        String roleName = dto.isAdmin() ? "ADMIN" : "USER";
-        RoleEntity userRole = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-        entity.setRole(userRole);
+        if(dto.isAdmin())
+            entity.setRole(Role.ROLE_GENERAL_MANAGER);
+        else
+            entity.setRole(Role.ROLE_USER);
 
         userRepository.save(entity);
     }
@@ -110,7 +108,7 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(entity);
     }
 
-    public List<UserEntity> findAllUsersByRole(String roleName) {
-        return userRepository.findAllByRoleName(roleName);
+    public List<UserEntity> findAllUsersByRole(Role role) {
+        return userRepository.findByRole(role);
     }
 }

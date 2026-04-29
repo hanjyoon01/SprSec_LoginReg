@@ -27,9 +27,11 @@ public class SecurityConfig {
     // role hierarchy
     @Bean
     public RoleHierarchy roleHierarchy() {
-        // ADMIN이 USER보다 상위 권한임을 표시
-        return RoleHierarchyImpl.withRolePrefix("")
-                .role("ADMIN").implies("USER")
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+                // 본사관리자는 창고관리자의 모든 권한을 포함한다.
+                .role("GENERAL_MANAGER").implies("WAREHOUSE_MANAGER")
+                // 창고관리자는 점주(일반회원)의 모든 권한을 포함한다.
+                .role("WAREHOUSE_MANAGER").implies("USER")
                 .build();
     }
 
@@ -72,7 +74,7 @@ public class SecurityConfig {
                         .requestMatchers("/join").permitAll()
                         .requestMatchers("/login").permitAll()
                         // 홈, 회원가입, 로그인 경로는 모든 권한 접근 가능
-                        .requestMatchers("/user/**").hasAuthority("USER")
+                        .requestMatchers("/user/**").hasRole("USER")
                         // 관리자 페이지는 관리자 권한만 접근 가능
                         .requestMatchers("/admin").access(customAuthorizationManager())
                         // 그 외 요청 모두 거절
@@ -98,7 +100,7 @@ public class SecurityConfig {
         return (authentication, context) -> {
             boolean allowed =
                 authentication.get().getAuthorities().stream()
-                            .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_GENERAL_MANAGER"));
             // 지역 맞는지
 
             // 사용할 수 있는 카운트

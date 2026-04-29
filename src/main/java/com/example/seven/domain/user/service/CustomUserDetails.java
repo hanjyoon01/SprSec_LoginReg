@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 @Getter
 @RequiredArgsConstructor
@@ -19,9 +20,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(new SimpleGrantedAuthority(entity.getRole().getName()));
-        return collection;
+        // 🌟 Enum 이름(USER) 앞에 "ROLE_"을 붙여서 시큐리티가 인식할 수 있게 합니다.
+        return Collections.singletonList(new SimpleGrantedAuthority(entity.getRole().name()));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CustomUserDetails implements UserDetails {
         return entity.getAddress();
     }
     public String getRole() {
-        return entity.getRole().getKname();
+        return entity.getRole().getDescription();
     }
 
 

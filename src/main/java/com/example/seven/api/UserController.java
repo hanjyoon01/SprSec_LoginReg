@@ -3,11 +3,11 @@ package com.example.seven.api;
 import com.example.seven.domain.user.dto.PasswordChangeDTO;
 import com.example.seven.domain.user.dto.UserUpdateDTO;
 import com.example.seven.domain.user.entity.UserEntity;
+import com.example.seven.domain.user.entity.Role;
 import com.example.seven.domain.user.service.CustomUserDetails;
 import com.example.seven.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,11 +41,11 @@ public class UserController {
 
         // 2. 권한 확인도 더 직관적으로 처리 가능합니다.
         boolean isAdmin = userDetails.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_GENERAL_MANAGER"));
 
         if (isAdmin) {
             // 관리자라면 'USER' 권한을 가진 회원들 목록을 가져옴
-            List<UserEntity> userList = userService.findAllUsersByRole("USER");
+            List<UserEntity> userList = userService.findAllUsersByRole(Role.ROLE_USER);
             model.addAttribute("userList", userList);
             model.addAttribute("isAdmin", true); // 화면 제어용 플래그
             System.out.println(userList);
